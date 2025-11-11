@@ -1,11 +1,81 @@
 @charset "UTF-8";
 /* CSS Document */
 
-ul#nav {
-    background:red;
+/* White = f2f2f3
+   Gray = 353535
+   Red = c13e3d
+   */
+html {
+    padding: 0;
+    margin: 0;
 }
-body {
-    font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
-    font-size: 14pt;
 
+body {
+    background-color:#ffffff;
+    font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
+    font-size: 16pt;
+    height: 800px;
+    width: auto;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar{
+    display: flex;
+    align-items: center;
+    height: 100px;
+    padding: 0px 20px;
+    background:#f2f2f3;
+    margin-top:-7px;
+    justify-content: space-between;
+}
+
+.brand{
+    display:flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.logo {
+    width: 85px;
+    height: auto;
+}
+
+.name {
+    font-size:1.6em;
+    font-weight: bold;
+    color:#353535;
+    font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
+}
+
+ul#nav {
+    list-style: none;
+    text-align: right;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+    display:inline-block;
+}
+
+    ul#nav li {
+        display: inline;
+    }
+
+    ul#nav li a {
+        color: #353535;
+        text-decoration: none;
+        padding-left:10px;
+        padding-right:10px;
+    }
+
+    ul#nav li a:hover {
+        color: #c13e3d;
+    }
+
+h1 {
+    font-size:1em;
+    color:#353535;
+    text-align:left;
+    font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
 }
