@@ -4,20 +4,62 @@
 /* White = f2f2f3
    Gray = 353535
    Red = c13e3d
+   
+   abcdefghijklmnopqrstuvwxyz
    */
 html {
     padding: 0;
     margin: 0;
+    display:flex;
+    flex-direction: column;
 }
 
 body {
-    background-color:#ffffff;
+    background-color:#f2f2f3;
     font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
     font-size: 16pt;
-    height: 800px;
     width: auto;
     padding: 0;
     margin: 0;
+    height:800px;
+    display:flex;
+    flex-direction: column;
+}
+
+.tools {
+    background-color:#f2f2f3;
+}
+
+.about {
+    background-color:#f2f2f3
+}
+
+.portfolio {
+    background-color:#f2f2f3;
+}
+
+div#background {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    z-index: -1;
+}
+
+.texture {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:0.9;
+}
+
+h1 {
+    font-size:1em;
+    color:#353535;
+    text-align:left;
+    font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
 }
 
 .navbar{
@@ -39,6 +81,7 @@ body {
 .logo {
     width: 85px;
     height: auto;
+    margin-top: 6px;
 }
 
 .name {
@@ -73,9 +116,34 @@ ul#nav {
         color: #c13e3d;
     }
 
-h1 {
-    font-size:1em;
+div#pagewrap {
+    flex:1;
+    position:relative;
+    z-index:1;
+}
+
+
+
+
+
+
+
+
+
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: .8em;
+    margin: 0;
+    padding: 0;
+    background-color:#f2f2f3;
+    width:100%;
+    height: 50px;
+}
+
+.footer_name {
     color:#353535;
-    text-align:left;
     font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
+    padding-left:20px;
 }
