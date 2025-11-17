@@ -10,6 +10,8 @@ html {
     margin: 0;
     display:flex;
     flex-direction: column;
+    height:auto;
+    min-height:800px;
 }
 
 body {
@@ -19,21 +21,10 @@ body {
     width: auto;
     padding: 0;
     margin: 0;
-    height:800px;
+    height:auto;
+    min-height: 800px;
     display:flex;
     flex-direction: column;
-}
-
-.tools {
-    background-color:#f2f2f3;
-}
-
-.about {
-    background-color:#f2f2f3
-}
-
-.portfolio {
-    background-color:#f2f2f3;
 }
 
 div#background {
@@ -53,11 +44,24 @@ div#background {
     opacity:0.9;
 }
 
-h1 {
+p {
     font-size:.8em;
     color:#353535;
-    text-align:left;
     font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
+    line-height: 1em;
+}
+
+h1 {
+    font-size:1em;
+    color:#353535;
+    font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
+}
+
+h2 {
+    font-size:1em;
+    color:#353535;
+    font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
+    align-content:end;
 }
 
 .navbar{
@@ -86,7 +90,8 @@ h1 {
     font-size:1.6em;
     font-weight: bold;
     color:#353535;
-    font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
+    font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman","serif";
+    /* font-family:"Eras Bold ITC", "sans-serif" */
 }
 
 ul#nav {
@@ -114,21 +119,61 @@ ul#nav {
         color: #c13e3d;
     }
 
+a {
+    text-decoration:none;
+    color:#353535;
+}
+
+a:hover {
+    color:#c13e3d
+}
+
 div#pagewrap {
     flex:1;
     position:relative;
     z-index:1;
     text-align:center;
     display:flex;
-    justify-content: center;
-    align-items: center;
+    justify-content:flex-start;
+    align-items: flex-start;
     flex-direction: column;
     padding:20px;
     min-height:calc(100vh - 150px);
     padding:20px;
 }
 
+div#about_me {
+    display:flex;
+    align-items: flex-start;
+    max-width: fit-content;
+    gap:70px;
+    margin:auto;
+    padding:20px 40px;
+}
 
+div#portrait img {
+    width: 450px;
+    height: auto;
+    border-radius: .7em;
+    float:left;
+    margin: 70px;
+}
+
+div#about_text {
+    flex: 1;
+    text-align: left;
+    align-content:center;
+    padding-top:100px;
+    padding-right:80px;
+}
+
+.reach_out{
+    font-weight:bold;
+}
+
+ .about {
+    line-height: 2em;
+ }
 
 
 
