@@ -5,7 +5,7 @@
    Gray = 383838
    Red = a7403f
    */
-   
+
 html {
     padding: 0;
     margin: 0;
@@ -135,13 +135,113 @@ div#pagewrap {
     z-index:1;
     text-align:center;
     display:flex;
-    justify-content:flex-start;
-    align-items: flex-start;
+    justify-content:center;
+    align-items: center;
     flex-direction: column;
     padding:20px;
     min-height:calc(100vh - 150px);
     padding:20px;
 }
+
+.wrapping {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px; 
+    box-sizing: border-box;
+}
+
+.project-grid {
+    display:flex;
+    flex-wrap: wrap;
+    gap:40px;
+    justify-content: center;
+    transform: translateY(-50px);
+}
+
+.project-card {
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    background-color: #f2f2f2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex: 0 0 300px;
+    max-width:300px;
+}
+
+.project-card:hover {
+    transform:translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.project-image img {
+    width: 100%;
+    height: auto; 
+}
+
+.project-info {
+    padding: 16px;
+    text-align: center;
+}
+
+.project-info h1 {
+    margin: 0;
+    font-size:1.2em;
+}
+
+/* Divider between project boxes and tool boxes */
+
+.tool-grid {
+    display:flex;
+    flex-wrap: wrap;
+    gap:40px;
+    justify-content: center;
+    transform: translateY(-92px);
+}
+
+.tool-card {
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    background-color: #f2f2f2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex: 0 0 300px;
+    max-width:300px;
+}
+
+.tool-card:hover {
+    transform:translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.tool-image img {
+    width: 100%;
+    height: auto;
+}
+
+.tool-info {
+    padding: 16px;
+    text-align: center;
+}
+
+.tool-info h1 {
+    margin: 0;
+    font-size:1.2em;
+}
+
+
+
+
+
 
 div#about_me {
     display:flex;
@@ -175,11 +275,6 @@ div#about_text {
  .about {
     line-height: 2em;
  }
-
-
-
-
-
 
 footer {
     display: flex;
