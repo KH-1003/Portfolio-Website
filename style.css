@@ -1,10 +1,13 @@
 @charset "UTF-8";
 /* CSS Document */
 
-/* White = f2f2f2
+/* Colors for styling
+   White = f2f2f2
    Gray = 383838
    Red = a7403f
-   */
+*/
+
+/* Main characterisitcs for files */
 
 html {
     padding: 0;
@@ -28,22 +31,7 @@ body {
     flex-direction: column;
 }
 
-div#background {
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    z-index: -1;
-}
-
-.texture {
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    opacity:0.9;
-}
+/* Text tags */
 
 p {
     font-size:.8em;
@@ -64,6 +52,8 @@ h2 {
     font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman"," serif";
     align-content:end;
 }
+
+/* Navbar, logo, and tabs*/
 
 .navbar{
     display: flex;
@@ -129,6 +119,27 @@ a:hover {
     color:#a7403f;
 }
 
+/* Background specifically for home page */
+
+div#background {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    z-index: -1;
+}
+
+.texture {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:0.9;
+}
+
+/* Style for body of pages */
+
 div#pagewrap {
     flex:1;
     position:relative;
@@ -142,6 +153,8 @@ div#pagewrap {
     min-height:calc(100vh - 150px);
     padding:20px;
 }
+
+/* Portfolio Boxes and any styling for Portfolio */
 
 .wrapping {
     display: flex;
@@ -194,7 +207,7 @@ div#pagewrap {
     font-size:1.2em;
 }
 
-/* Divider between project boxes and tool boxes */
+/* Tool Boxes and any styling for Tools */
 
 .tool-grid {
     display:flex;
@@ -238,10 +251,85 @@ div#pagewrap {
     font-size:1.2em;
 }
 
+/* Color Palette Creator Tool */
+
+.palette button {
+    outline: none;
+    border: none;
+    padding: 0.7em 2em;
+    font-size: 1.1em;
+    position: absolute;
+    top:-1em;
+    left:50%;
+    transform: translateX(-50%);
+    border-radius: 2em;
+    background:#383838;
+    color:#f2f2f2;
+    font-weight: 500;
+    letter-spacing: 2px;
+    
+}
+
+.palette button:hover {
+    background:#a7403f;
+    color:#f2f2f2;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+.palette {
+    position: relative; 
+    background: #ffffff;
+    width: 45em;
+    height:25em;
+    border-radius: 20px;
+    box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: #383838;
+    padding-top: 5em;
+    box-sizing: border-box;
+}
+
+.colors {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow-y: hidden;
+    height: 100%;
+    border-radius: 20px;
+}
+
+.colors > div {
+    width: 25%;
+}
+
+.color {
+    background: #383838;
+    height: 17em;
+    width: 100%;
+}
+
+.colors h4 {
+    font-size: 0.9em;
+}
+
+
+
+@media screen and (max-width:500px) {
+    body { padding: 2em; }
+    .palette { height: initial; }
+    .colors { flex-direction: column; }
+    .colors > div { width: 100%; }
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
 
 
 
 
+
+/* About me page */
 
 div#about_me {
     display:flex;
@@ -275,6 +363,8 @@ div#about_text {
  .about {
     line-height: 2em;
  }
+
+/* Footer */
 
 footer {
     display: flex;

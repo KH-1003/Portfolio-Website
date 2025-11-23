@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="style.css">
     </head>
 
-    <body class="portfolio">
+    <body>
         <nav class="navbar">
             <div class="brand">
                 <a href="index.html"><img src="artwork/logo.png" alt="Personal Logo" class="logo"></a>
@@ -20,27 +20,73 @@
                 <li><a href="about.html">About</a></li>
             </ul>
         </nav>
-
     
         <div id="pagewrap">
 
-            
+            <div class="palette">
+                <button>Generate</button>
+
+                <div class="colors">
+                    <div>
+                        <h4 class="hex">#1234</h4>
+                        <div class="color"></div>
+                    </div>
+
+                    <div>
+                        <h4 class="hex">#1234</h4>
+                        <div class="color"></div>
+                    </div>
+
+                    <div>
+                        <h4 class="hex">#1234</h4>
+                        <div class="color"></div>
+                    </div>
+
+                    <div>
+                        <h4 class="hex">#1234</h4>
+                        <div class="color"></div>
+                    </div>
+
+                    <div>
+                        <h4 class="hex">#1234</h4>
+                        <div class="color"></div>
+                    </div>
+                    
+                </div>
+
+            </div>
+
+            <script>
+                const btn = document.querySelector('button');
+                const color = document.querySelectorAll('.color');
+                const hex = document.querySelectorAll('.hex');
+
+                btn.addEventListener('click', generateColors);
+
+                function generateColors() {
+                    for(let i = 0; i < color.length; i++) {
+
+                        const randomColor = Math.floor(Math.random()*16777215).toString(16);
+
+                        color[i].style.background = "#" + randomColor;
+
+                        color[i].classList.add('fade-in');
+                        setTimeout(() => color[i.classList.remove], 400);
+
+                        hex[i].innerHTML = randomColor;
+                    }
+                }
+                
+                generateColors();
+
+            </script>
 
 
-
-
-
-
-
-
-            
         </div>
 
         <footer>
             <span class="footer_name">© Kaylee Hinton. All rights reserved.</span>
         </footer>
-
-
 
     </body>
 
