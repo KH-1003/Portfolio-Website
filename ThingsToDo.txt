@@ -1,0 +1,8 @@
+List of things to add and needing done
+    - Creating the color wheel palette tool
+    - Creating the other tool
+    - Looking into page transitions when clicking to a new page (like from about to home, fade in)
+    - Cleaning up code to make it present more like a template
+    - Adding better images for the tool and portfolio clickable boxes
+    - Organizing the page files to be cleaner, portfolio pages in a folder, tools in a folder, etc.?
+    - Loading time of the background image on the home page, takes second to load from other page
