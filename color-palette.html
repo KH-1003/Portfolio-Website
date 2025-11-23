@@ -54,29 +54,50 @@
                     
                 </div>
 
+                <input type="color" id="hidden-picker" style="display:none;"/>
+
             </div>
+
 
             <script>
                 const btn = document.querySelector('button');
-                const color = document.querySelectorAll('.color');
-                const hex = document.querySelectorAll('.hex');
+                const colorBlocks = document.querySelectorAll('.color');
+                const hexLabels = document.querySelectorAll('.hex');
+                const hiddenPicker = document.querySelector('#hidden-picker');
 
                 btn.addEventListener('click', generateColors);
 
                 function generateColors() {
-                    for(let i = 0; i < color.length; i++) {
+                    for(let i = 0; i < colorBlocks.length; i++) {
 
-                        const randomColor = Math.floor(Math.random()*16777215).toString(16);
+                        const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0");
 
-                        color[i].style.background = "#" + randomColor;
+                        colorBlocks[i].style.background = randomColor;
 
-                        color[i].classList.add('fade-in');
-                        setTimeout(() => color[i.classList.remove], 400);
-
-                        hex[i].innerHTML = randomColor;
+                        hexLabels[i].textContent = randomColor;
                     }
                 }
                 
+                colorBlocks.forEach((block, index) => {
+                    block.addEventListener('click', () => {
+                        const current = block.style.backgroundColor;
+                        hiddenPicker.value = rgbToHex(current);
+                        
+                        hiddenPicker.oninput = () => {
+                            block.style.background = hiddenPicker.value;
+                            hexLabels[index].textContent = hiddenPicker.value;
+                        };
+
+                        hiddenPicker.click();
+                    });
+                });
+
+                function rgbToHex(rgb) {
+                    if (!rgb) return "#000000";
+                    const nums = rgb.match(/\d+/g).map(Number);
+                    return "#" + nums.map(n => n.toString(16).padStart(2, "0")).join("");
+                }
+
                 generateColors();
 
             </script>

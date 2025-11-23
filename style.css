@@ -312,8 +312,6 @@ div#pagewrap {
     font-size: 0.9em;
 }
 
-
-
 @media screen and (max-width:500px) {
     body { padding: 2em; }
     .palette { height: initial; }
@@ -325,6 +323,15 @@ div#pagewrap {
     to { opacity: 1; }
 }
 
+
+
+
+.color-input {
+    background:#fff;
+    border:1px #ccc solid;
+    border-radius: 4px;
+    padding: 0.3em; 
+}
 
 
 
