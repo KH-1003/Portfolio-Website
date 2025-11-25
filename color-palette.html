@@ -51,19 +51,28 @@
                         <h4 class="hex">#1234</h4>
                         <div class="color"></div>
                     </div>
-                    
                 </div>
-
-                <input type="color" id="hidden-picker" style="display:none;"/>
-
             </div>
 
+            <div id="customColorPicker">
+                
+                <canvas id="colorCanvas" width="220" height="200"></canvas>
+
+                    <div class="hue-slider">
+                        <div class="hue-bar"></div>
+                        <div class="hue-handle"></div>
+
+                    </div>
+
+                    <div id="previewColor" class="preview-row"></div>
+
+                        <button id="confirmColor">Confirm</button>
+            </div>
 
             <script>
                 const btn = document.querySelector('button');
                 const colorBlocks = document.querySelectorAll('.color');
                 const hexLabels = document.querySelectorAll('.hex');
-                const hiddenPicker = document.querySelector('#hidden-picker');
 
                 btn.addEventListener('click', generateColors);
 
@@ -78,29 +87,190 @@
                     }
                 }
                 
-                colorBlocks.forEach((block, index) => {
-                    block.addEventListener('click', () => {
-                        const current = block.style.backgroundColor;
-                        hiddenPicker.value = rgbToHex(current);
-                        
-                        hiddenPicker.oninput = () => {
-                            block.style.background = hiddenPicker.value;
-                            hexLabels[index].textContent = hiddenPicker.value;
-                        };
+                let selectedBox = null;
+                let selectedIndex = null;
 
-                        hiddenPicker.click();
-                    });
+                let hue = 0;
+                let dragging = false;
+
+                const popup = document.getElementById("customColorPicker");
+                const canvas = document.getElementById("colorCanvas");
+                const ctx = canvas.getContext('2d');
+                const previewBox = document.getElementById("previewColor");
+
+                const hueBar = document.querySelector('.hue-bar')
+                const hueHandle = document.querySelector('.hue-handle')
+
+                hueHandle.addEventListener('mousedown', () => dragging = true);
+                document.addEventListener('mouseup', () => dragging = false);
+
+                function drawSpectrum() {
+                    const width = canvas.width;
+                    const height = canvas.height;
+
+                    let [r, g, b] = hueToRgb(hue);
+                    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                    ctx.fillRect(0, 0, width, height);
+
+                    const whiteGradient = ctx.createLinearGradient(0, 0, width, 0);
+                    whiteGradient.addColorStop(0, "white");
+                    whiteGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+                    ctx.fillStyle = whiteGradient;
+                    ctx.fillRect(0, 0, width, height);
+
+                    const blackGradient = ctx.createLinearGradient(0, 0, 0, height);
+                    blackGradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+                    blackGradient.addColorStop(1, "black");
+                    ctx.fillStyle = blackGradient;
+                    ctx.fillRect(0, 0, width, height);
+                }
+
+                function hueToRgb(h) {
+                    h = h % 360;
+                    let c = 255;
+                    let x = Math.floor((1 - Math.abs((h / 60) % 2 - 1)) * 255);
+
+                    if (h < 60) return [c, x, 0];
+                    if (h < 120) return [x, c, 0];
+                    if (h < 180) return [0, c, x];
+                    if (h < 240) return [0, x, c];
+                    if (h < 300) return [x, 0, c];
+
+                    return [c, 0, x];
+                }
+
+                function getPixelRGB(x, y) {
+                    const pixel = ctx.getImageData(x, y, 1, 1).data;
+                    const [r, g, b] = pixel;
+                    return {r, g, b };
+                }
+
+                function updatePreviewColor(r, g, b) {
+                    previewBox.style.background = `rgb(${r}, ${g}, ${b})`;
+                }
+
+                function openPicker(block, index) {
+                    selectedBox = block;
+                    selectedIndex = index;
+
+                    popup.style.display = 'block';
+                    const rect = block.getBoundingClientRect();
+
+                    const popupHeight = popup.offsetHeight;
+                    popup.style.top = rect.top + window.scrollY - popupHeight + 'px';
+                    popup.style.left = rect.left + window.scrollX + 'px';
+
+                    selectedColor = window.getComputedStyle(block).backgroundColor;
+                    updatePreviewColor(...selectedColor.match(/\d+/g).map(Number));
+                    
+                    drawSpectrum();
+                }
+
+                function closePicker() {
+                    popup.style.display ='none';
+                }
+
+                function applyHexInput(label, index) {
+                    let hex = label.textContent.trim();
+
+                    if (!hex.startsWith('#')) hex = '#' + hex;
+
+                    if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+                        colorBlocks[index].style.background = hex;
+                        label.textContent = hex.toUpperCase();
+                    } else {
+                        const currentColor = window.getComputedStyle(colorBlocks[index]).backgroundColor;
+                        const rgb = currentColor.match(/\d+/g).map(Number);
+                        const fallbackHex = '#' + rgb.map( n => n.toString(16).padStart(2, "0")).join('');
+                        label.textContent = fallbackHex.toUpperCase();
+                        alert("Invalid hex code")
+                    }
+                    label.contentEditable = false;
+                }
+
+                canvas.addEventListener('click',(e) =>{
+                    const rect = canvas.getBoundingClientRect();
+
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+
+                    const x = Math.floor(e.clientX - rect.left) * scaleX;
+                    const y = Math.floor(e.clientY - rect.top) * scaleY;
+
+                    const {r, g, b} = getPixelRGB(x, y);
+                    updatePreviewColor(r, g, b);
                 });
 
-                function rgbToHex(rgb) {
-                    if (!rgb) return "#000000";
-                    const nums = rgb.match(/\d+/g).map(Number);
-                    return "#" + nums.map(n => n.toString(16).padStart(2, "0")).join("");
-                }
+                hueHandle.addEventListener('mousedown', () => dragging = true);
+                document.addEventListener('mouseup', () => dragging = false);
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!dragging) return;
+
+                    const rect = hueBar.getBoundingClientRect();
+                    let x = e.clientX - rect.left;
+                    x = Math.max(0, Math.min(rect.width, x));
+
+                    const percent = (x / rect.width) * 100;
+
+                    hueHandle.style.left = percent + "%";
+
+                    hue = Math.round((x / rect.width) * 360);
+                    drawSpectrum()
+                });
+
+                hueBar.addEventListener('click', (e) => {
+                    const rect = hueBar.getBoundingClientRect();
+                    let x = e.clientX - rect.left;
+                    x = Math.max(0, Math.min(rect.width, x));
+
+                    hueHandle.style.left = `${(x / rect.width) * 100}%`;
+                    hue = Math.round((x / rect.width) * 360);
+                    drawSpectrum();
+                });
+
+                document.getElementById("confirmColor").addEventListener('click', () => {
+                    const rgb = previewBox.style.background.match(/\d+/g).map(Number);
+                    const [r, g, b] = rgb
+                   
+                    const hex = "#" +
+                                r.toString(16).padStart(2, "0") +
+                                g.toString(16).padStart(2, "0") +
+                                b.toString(16).padStart(2, "0");
+
+                    selectedBox.style.background = `rgb(${r}, ${g}, ${b})`;
+                    hexLabels[selectedIndex].textContent = hex;
+
+                    closePicker();
+                });
+
+                colorBlocks.forEach((block, i) => {
+                    block.addEventListener('click', () => openPicker(block, i));
+                });
+
+                hexLabels.forEach((label, i) => {
+                    label.addEventListener('click', () => {
+                        label.contentEditable = true;
+                        label.focus();
+                    });
+
+                    label.addEventListener('blur', () => {
+                        applyHexInput(label, i);
+                    });
+
+                    label.addEventListener('keydown', () =>{
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            label.blur();
+                        }
+                    });
+                });
 
                 generateColors();
 
             </script>
+
+
 
 
         </div>
