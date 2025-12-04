@@ -289,13 +289,21 @@ div#pagewrap {
     box-sizing: border-box;
 }
 
+.color-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .colors {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     overflow-y: hidden;
     height: 100%;
     border-radius: 20px;
+    text-align: center;
 }
 
 .colors > div {
@@ -310,7 +318,41 @@ div#pagewrap {
 
 .colors h4 {
     font-size: 0.9em;
+    width:auto;
+    text-align: center;
 }
+.lock-wrap{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(242,242,242,0.2);
+    opacity: 0;
+    transition: opacity 0.2s ease; 
+    pointer-events: none;
+}
+.lock-icon {
+    width: 20px;
+    height: 25px;
+}
+
+.color-container:hover:not(.locked) .lock-wrap {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.color-container.locked .lock-wrap {
+    opacity: 1;
+    background-color: rgba(0,0,0, 0.2);
+    pointer-events: auto;
+}
+
 
 @media screen and (max-width:500px) {
     body { padding: 2em; }
@@ -318,6 +360,23 @@ div#pagewrap {
     .colors { flex-direction: column; }
     .colors > div { width: 100%; }
 }
+
+#harmonySelect {
+    position:absolute;
+    top:10px;
+    left:10px;
+    background:#f2f2f2;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 20;
+    margin-bottom: 1rem;
+}
+
+#harmonySelect label {
+    margin-right: 5px;
+}
+
 
 #customColorPicker {
     display:none;

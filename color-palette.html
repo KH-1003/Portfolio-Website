@@ -24,38 +24,61 @@
         <div id="pagewrap">
 
             <div class="palette">
-                <button>Generate</button>
+
+                <div id="harmonyOptions">
+                        <select id="harmonySelect">
+                            <option value="none">Random</option>
+                            <option value="complementary">Complementary</option>
+                        </select>
+                    </div>
+
+                <button id="generateButton">Generate</button>
 
                 <div class="colors">
-                    <div>
+                    <div class="color-container">
                         <h4 class="hex">#1234</h4>
                         <div class="color"></div>
+                        <div class="lock-wrap">
+                            <img class="lock-icon" src="artwork/Lock.png">
+                        </div>
                     </div>
 
-                    <div>
+                    <div class="color-container">
                         <h4 class="hex">#1234</h4>
                         <div class="color"></div>
+                        <div class="lock-wrap">
+                            <img class="lock-icon" src="artwork/Lock.png">
+                        </div>
                     </div>
 
-                    <div>
+                    <div class="color-container">
                         <h4 class="hex">#1234</h4>
                         <div class="color"></div>
+                        <div class="lock-wrap">
+                            <img class="lock-icon" src="artwork/Lock.png">
+                        </div>
                     </div>
 
-                    <div>
+                    <div class="color-container">
                         <h4 class="hex">#1234</h4>
                         <div class="color"></div>
+                        <div class="lock-wrap">
+                            <img class="lock-icon" src="artwork/Lock.png">
+                        </div>
                     </div>
 
-                    <div>
+                    <div class="color-container">
                         <h4 class="hex">#1234</h4>
                         <div class="color"></div>
+                        <div class="lock-wrap">
+                            <img class="lock-icon" src="artwork/Lock.png">
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div id="customColorPicker">
-                
+
                 <canvas id="colorCanvas" width="220" height="200"></canvas>
 
                     <div class="hue-slider">
@@ -70,39 +93,168 @@
             </div>
 
             <script>
-                const btn = document.querySelector('button');
+                const colorContainers = document.querySelectorAll('.colors > div');
                 const colorBlocks = document.querySelectorAll('.color');
                 const hexLabels = document.querySelectorAll('.hex');
-
-                btn.addEventListener('click', generateColors);
-
-                function generateColors() {
-                    for(let i = 0; i < colorBlocks.length; i++) {
-
-                        const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0");
-
-                        colorBlocks[i].style.background = randomColor;
-
-                        hexLabels[i].textContent = randomColor;
-                    }
-                }
-                
-                let selectedBox = null;
-                let selectedIndex = null;
-
-                let hue = 0;
-                let dragging = false;
+                const generateButton = document.getElementById('generateButton');
+                const confirmButton = document.getElementById('confirmColor')
+                const harmonySelect = document.getElementById('harmonySelect')
 
                 const popup = document.getElementById("customColorPicker");
                 const canvas = document.getElementById("colorCanvas");
                 const ctx = canvas.getContext('2d');
                 const previewBox = document.getElementById("previewColor");
-
                 const hueBar = document.querySelector('.hue-bar')
                 const hueHandle = document.querySelector('.hue-handle')
 
+                const lockImg = 'artwork/Lock.png';
+
+                let selectedBox = null;
+                let selectedIndex = null;
+                let hue = 0;
+                let dragging = false;
+                let currentBaseColor = null;
+                let complementaryPair = null;
+
+                let locked = Array(colorBlocks.length).fill(false);
+
                 hueHandle.addEventListener('mousedown', () => dragging = true);
                 document.addEventListener('mouseup', () => dragging = false);
+
+                colorContainers.forEach((container, i) => {
+                    const lockWrap = container.querySelector('.lock-wrap');
+                    const colorBlock = container.querySelector('.color');
+
+                    lockWrap.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        locked[i] = !locked[i];
+
+                        if (locked[i]) {
+                            container.classList.add('locked');
+                        } else {
+                            container.classList.remove('locked');
+                        }
+                    });
+
+                    colorBlock.addEventListener('click', () => {
+                        if(!locked[i]) openPicker(colorBlock, i);
+                    }); 
+                });
+
+                // Random color generation
+                function generateColors() {
+                    colorContainers.forEach(c => c.style.display = 'block');
+                    colorBlocks.forEach((block, i) => {
+                        if (!locked[i]) {
+                            const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0").toUpperCase();
+
+                            colorBlocks[i].style.background = randomColor;
+
+                            hexLabels[i].textContent = randomColor;
+                        }
+                    });
+                }
+
+                function complementaryColors() {
+                    let baseColor;
+                    const lockedIndices = [0, 1, 2, 3, 4].filter(i => locked[i]);
+
+                    if (lockedIndices.length > 1) {
+                        alert("Complementary palette can only use 1 locked color. Please unlock others.");
+                        return;
+                    }
+
+                    let lockedIndex = null;
+
+                    if (lockedIndices.length === 1) {
+                        lockedIndex = lockedIndices[0];
+                        baseColor = hexLabels[lockedIndices[0]].textContent;
+
+                        locked[lockedIndex] = false;
+                        colorContainers[lockedIndex].classList.remove('locked');
+                        locked[0] = true;
+
+                    } else {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256);
+                        baseColor = `rgb(${r}, ${g}, ${b})`;
+
+                        locked[0] = false;
+                    }
+
+                    let baseR, baseG, baseB;
+
+                    if (baseColor.startsWith('#')) {
+                        const bigint = parseInt(baseColor.slice(1), 16);
+                        baseR = (bigint >> 16) & 255;
+                        baseG = (bigint >> 8) & 255;
+                        baseB = bigint & 255;
+                    } else {
+                        [baseR, baseG, baseB] = baseColor.match(/\d+/g).map(Number);
+                    }
+
+                    const compR = 255 - baseR;
+                    const compG = 255 - baseG;
+                    const compB = 255 - baseB;
+
+                    complementaryPair = [
+                        { r: baseR, g: baseG, b: baseB},
+                        { r: compR, g: compG, b: compB}
+                    ];
+
+                    colorContainers.forEach(c => c.style.display = 'none');
+
+                    for (let i = 0; i < 2; i++) {
+                        const container = colorContainers[i];
+                        const block = colorBlocks[i];
+                        const label = hexLabels[i];
+
+                        container.style.display = 'block';
+
+                        const color = complementaryPair[i]
+
+                        block.style.background = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                        label.textContent = rgbToHex(color.r, color.g, color.b);
+
+                        if (i === 0 && lockedIndex !== null) {
+                            container.classList.add('locked');
+                        } else {
+                        container.classList.remove('locked');
+                        }
+                    }
+
+                    for (let i = 2; i < colorContainers.length; i++) {
+                        colorContainers[i].style.display = 'none';
+                    }
+                }
+
+                generateButton.addEventListener('click', () => {
+                    if (harmonySelect.value === 'complementary') {
+                        complementaryColors();
+                    } else {
+                        generateColors();
+                    }
+                });
+
+                function openPicker(block, index) {
+                    selectedBox = block;
+                    selectedIndex = index;
+
+                    popup.style.display = 'block';
+                    const rect = block.getBoundingClientRect();
+
+                    const popupHeight = popup.offsetHeight;
+                    popup.style.top = rect.top + window.scrollY - popupHeight + 'px';
+                    popup.style.left = rect.left + window.scrollX + 'px';
+
+                    selectedColor = window.getComputedStyle(block).backgroundColor;
+                    updatePreviewColor(...selectedColor.match(/\d+/g).map(Number));
+
+                    currentBaseColor = selectedColor;
+                    
+                    drawSpectrum();
+                }
 
                 function drawSpectrum() {
                     const width = canvas.width;
@@ -123,6 +275,10 @@
                     blackGradient.addColorStop(1, "black");
                     ctx.fillStyle = blackGradient;
                     ctx.fillRect(0, 0, width, height);
+                }
+
+                function rgbToHex(r, g, b) {
+                    return "#" + [r, g, b].map( n => n.toString(16).padStart(2, '0')).join('').toUpperCase();
                 }
 
                 function hueToRgb(h) {
@@ -149,23 +305,6 @@
                     previewBox.style.background = `rgb(${r}, ${g}, ${b})`;
                 }
 
-                function openPicker(block, index) {
-                    selectedBox = block;
-                    selectedIndex = index;
-
-                    popup.style.display = 'block';
-                    const rect = block.getBoundingClientRect();
-
-                    const popupHeight = popup.offsetHeight;
-                    popup.style.top = rect.top + window.scrollY - popupHeight + 'px';
-                    popup.style.left = rect.left + window.scrollX + 'px';
-
-                    selectedColor = window.getComputedStyle(block).backgroundColor;
-                    updatePreviewColor(...selectedColor.match(/\d+/g).map(Number));
-                    
-                    drawSpectrum();
-                }
-
                 function closePicker() {
                     popup.style.display ='none';
                 }
@@ -181,7 +320,7 @@
                     } else {
                         const currentColor = window.getComputedStyle(colorBlocks[index]).backgroundColor;
                         const rgb = currentColor.match(/\d+/g).map(Number);
-                        const fallbackHex = '#' + rgb.map( n => n.toString(16).padStart(2, "0")).join('');
+                        const fallbackHex = '#' + rgb.map( n => n.toString(16).padStart(2, "0")).join('').toUpperCase();
                         label.textContent = fallbackHex.toUpperCase();
                         alert("Invalid hex code")
                     }
@@ -199,11 +338,10 @@
 
                     const {r, g, b} = getPixelRGB(x, y);
                     updatePreviewColor(r, g, b);
+
+                    currentBaseColor = `rgb(${r}, ${g}, ${b})`;
                 });
-
-                hueHandle.addEventListener('mousedown', () => dragging = true);
-                document.addEventListener('mouseup', () => dragging = false);
-
+                
                 document.addEventListener('mousemove', (e) => {
                     if (!dragging) return;
 
@@ -229,23 +367,19 @@
                     drawSpectrum();
                 });
 
-                document.getElementById("confirmColor").addEventListener('click', () => {
+                confirmButton.addEventListener('click', () => {
                     const rgb = previewBox.style.background.match(/\d+/g).map(Number);
                     const [r, g, b] = rgb
                    
                     const hex = "#" +
-                                r.toString(16).padStart(2, "0") +
-                                g.toString(16).padStart(2, "0") +
-                                b.toString(16).padStart(2, "0");
+                                r.toString(16).padStart(2, "0").toUpperCase() +
+                                g.toString(16).padStart(2, "0").toUpperCase() +
+                                b.toString(16).padStart(2, "0").toUpperCase();
 
                     selectedBox.style.background = `rgb(${r}, ${g}, ${b})`;
                     hexLabels[selectedIndex].textContent = hex;
 
                     closePicker();
-                });
-
-                colorBlocks.forEach((block, i) => {
-                    block.addEventListener('click', () => openPicker(block, i));
                 });
 
                 hexLabels.forEach((label, i) => {
@@ -267,7 +401,6 @@
                 });
 
                 generateColors();
-
             </script>
 
 

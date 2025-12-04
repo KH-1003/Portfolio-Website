@@ -1,8 +1,6 @@
 List of things to add and needing done
     - Creating the other tool
 
-    - Looking into page transitions when clicking to a new page (like from about to home, fade in)
-
     - Cleaning up code to make it present more like a template
 
     - Adding better images for the tool and portfolio clickable boxes
@@ -10,3 +8,14 @@ List of things to add and needing done
     - Organizing the page files to be cleaner, portfolio pages in a folder, tools in a folder, etc.?
 
     - Loading time of the background image on the home page, takes second to load from other page
+
+    - Complementary color option for the color palette generator
+
+    - Self evaluation part of the paper is the most important for the learning objectives (paper portion)
+
+
+
+    not true Complementary
+    lets color picker open when color is locked
+    not locking the correct color when switching from random to complementary
+    if locked color is in 3 4 or 5 it doesnt unlock that block and switch to a different block, doesnt keep that color locked and doesnt generate random complementary colors when both colors are unlocked
