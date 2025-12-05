@@ -26,11 +26,17 @@
             <div class="palette">
 
                 <div id="harmonyOptions">
-                        <select id="harmonySelect">
-                            <option value="none">Random</option>
-                            <option value="complementary">Complementary</option>
-                        </select>
-                    </div>
+                    <select id="harmonySelect">
+                        <option value="none">Random</option>
+                        <option value="analogous">Analogous</option>
+                        <option value="complementary">Complementary</option>
+                        <option value="dscomplementary">Double Split Complementary</option>
+                        <option value="rectangle">Rectangle</option>
+                        <option value="splitcomplementary">Split Complementary</option>
+                        <option value="tetradic">Tetradic</option>
+                        <option value="triad">Triad</option>
+                    </select>
+                </div>
 
                 <button id="generateButton">Generate</button>
 
@@ -154,7 +160,81 @@
                         }
                     });
                 }
+                
+                function analogousColors() {
+                    let baseColor;
+                    const lockedIndices = [0, 1, 2, 3, 4].filter(i => locked[i]);
 
+                    if (lockedIndices.length > 1) {
+                        alert("Analogous palette can only use 1 locked color. Please unlock others.")
+                        return;
+                    }
+
+                    let lockedIndex = null;
+
+                    if (lockedIndices.length === 1) {
+                        lockedIndex = lockedIndices[0];
+                        baseColor = hexLabels[lockedIndex].textContent;
+
+                        locked[lockedIndex] = false;
+                        colorContainers[lockedIndex].classList.remove('locked');
+                        locked[0] = true;
+                    } else {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256)
+                        baseColor = `rgb(${r}, ${g}, ${b})`;
+                        locked[0] = false;
+                    }
+
+                    let baseR, baseG, baseB;
+
+                    if (baseColor.startsWith('#')) {
+                        const bigint = parseInt(baseColor.slice(1), 16);
+                        baseR = (bigint >> 16) & 255;
+                        baseG = (bigint >> 8) & 255;
+                        baseB = bigint & 255;
+                    } else {
+                        [baseR, baseG, baseB] = baseColor.match(/\d+/g).map(Number);
+                    }
+
+                    const hsl = rgbToHsl(baseR, baseG, baseB);
+
+                    const analogous1 = hslToRgb((hsl.h + 30) % 360, hsl.s, hsl.l);
+                    const analogous2 = hslToRgb((hsl.h + 330) % 360, hsl.s, hsl.l);
+
+                    analogousPair = [
+                        { r: baseR, g: baseG, b: baseB },
+                        { r: analogous1.r, g: analogous1.g, b: analogous1.b},
+                        { r: analogous2.r, g: analogous2.g, b: analogous2.b }
+                    ];
+
+                    colorContainers.forEach(c => c.style.display = 'none');
+
+                    for (let i = 0; i < analogousPair.length; i++) {
+                        const container = colorContainers[i];
+                        const block = colorBlocks[i];
+                        const label = hexLabels[i];
+
+                        container.style.display = 'block';
+
+                        const color = analogousPair[i];
+                        block.style.background = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                        label.textContent = rgbToHex(color.r, color.g, color.b);
+
+                        if (i ===0 && lockedIndex !== null) {
+                            container.classList.add('locked');
+                        } else {
+                            container.classList.remove('locked');
+                        }
+                    }
+
+                    for (let i = analogousPair.length; i < colorContainers.length; i++) {
+                        colorContainers[i].style.display = 'none';
+                    }
+                }
+
+                // Complementary color generation
                 function complementaryColors() {
                     let baseColor;
                     const lockedIndices = [0, 1, 2, 3, 4].filter(i => locked[i]);
@@ -193,11 +273,6 @@
                     } else {
                         [baseR, baseG, baseB] = baseColor.match(/\d+/g).map(Number);
                     }
-                    /*
-                    const compR = 255 - baseR;
-                    const compG = 255 - baseG;
-                    const compB = 255 - baseB;
-                    */
 
                     const hsl = rgbToHsl(baseR, baseG, baseB);
                     const compH = (hsl.h + 180) % 360;
@@ -233,6 +308,408 @@
                         colorContainers[i].style.display = 'none';
                     }
                 }
+
+                // Double Split Complementary
+                function doubleSplitComplementaryColors() {
+                    let baseColor;
+                    const lockedIndices = [0, 1, 2, 3, 4].filter(i => locked[i]);
+
+                    if (lockedIndices.length > 1) {
+                        alert("Double Split Complementary palette can only use 1 locked color. Please unlock others.")
+                        return;
+                    }
+
+                    let lockedIndex = null;
+
+                    if (lockedIndices.length === 1) {
+                        lockedIndex = lockedIndices[0];
+                        baseColor = hexLabels[lockedIndex].textContent;
+
+                        locked[lockedIndex] = false;
+                        colorContainers[lockedIndex].classList.remove('locked');
+                        locked[0] = true;
+                    } else {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256)
+                        baseColor = `rgb(${r}, ${g}, ${b})`;
+                        locked[0] = false;
+                    }
+
+                    let baseR, baseG, baseB;
+
+                    if (baseColor.startsWith('#')) {
+                        const bigint = parseInt(baseColor.slice(1), 16);
+                        baseR = (bigint >> 16) & 255;
+                        baseG = (bigint >> 8) & 255;
+                        baseB = bigint & 255;
+                    } else {
+                        [baseR, baseG, baseB] = baseColor.match(/\d+/g).map(Number);
+                    }
+
+                    const hsl = rgbToHsl(baseR, baseG, baseB);
+
+                    const dsc1 = hslToRgb((hsl.h + 150) % 360, hsl.s, hsl.l);
+                    const dsc2 = hslToRgb((hsl.h + 210) % 360, hsl.s, hsl.l);
+                    const dsc3 = hslToRgb((hsl.h + 330) % 360, hsl.s, hsl.l);
+                    const dsc4 = hslToRgb((hsl.h + 30) % 360, hsl.s, hsl.l);
+
+                    const dscPair = [
+                        { r: baseR, g: baseG, b: baseB },
+                        { r: dsc1.r, g: dsc1.g, b: dsc1.b},
+                        { r: dsc2.r, g: dsc2.g, b: dsc2.b },
+                        { r: dsc3.r, g: dsc3.g, b: dsc3.b },
+                        { r: dsc4.r, g: dsc4.g, b: dsc4.b },
+                    ];
+                    
+                    colorContainers.forEach(c => c.style.display = 'none');
+
+                    for (let i = 0; i < dscPair.length; i++) {
+                        const container = colorContainers[i];
+                        const block = colorBlocks[i];
+                        const label = hexLabels[i];
+
+                        container.style.display = 'block';
+
+                        const color = dscPair[i];
+                        block.style.background = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                        label.textContent = rgbToHex(color.r, color.g, color.b);
+
+                        if (i ===0 && lockedIndex !== null) {
+                            container.classList.add('locked');
+                        } else {
+                            container.classList.remove('locked');
+                        }
+                    }
+
+                    for (let i = dscPair.length; i < colorContainers.length; i++) {
+                        colorContainers[i].style.display = 'none';
+                    }
+                }
+
+                function rectangleColors() {
+                    let baseColor;
+                    const lockedIndices = [0, 1, 2, 3, 4].filter(i => locked[i]);
+
+                    if (lockedIndices.length > 1) {
+                        alert("Rectangle palette can only use 1 locked color. Please unlock others.")
+                        return;
+                    }
+
+                    let lockedIndex = null;
+
+                    if (lockedIndices.length === 1) {
+                        lockedIndex = lockedIndices[0];
+                        baseColor = hexLabels[lockedIndex].textContent;
+
+                        locked[lockedIndex] = false;
+                        colorContainers[lockedIndex].classList.remove('locked');
+                        locked[0] = true;
+                    } else {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256)
+                        baseColor = `rgb(${r}, ${g}, ${b})`;
+                        locked[0] = false;
+                    }
+
+                    let baseR, baseG, baseB;
+
+                    if (baseColor.startsWith('#')) {
+                        const bigint = parseInt(baseColor.slice(1), 16);
+                        baseR = (bigint >> 16) & 255;
+                        baseG = (bigint >> 8) & 255;
+                        baseB = bigint & 255;
+                    } else {
+                        [baseR, baseG, baseB] = baseColor.match(/\d+/g).map(Number);
+                    }
+
+                    const hsl = rgbToHsl(baseR, baseG, baseB);
+
+                    const rect1 = hslToRgb((hsl.h + 60) % 360, hsl.s, hsl.l);
+                    const rect2 = hslToRgb((hsl.h + 180) % 360, hsl.s, hsl.l);
+                    const rect3 = hslToRgb((hsl.h + 240) % 360, hsl.s, hsl.l);
+
+                    rectPair = [
+                        { r: baseR, g: baseG, b: baseB },
+                        { r: rect1.r, g: rect1.g, b: rect1.b},
+                        { r: rect2.r, g: rect2.g, b: rect2.b },
+                        { r: rect3.r, g: rect3.g, b: rect3.b },
+                    ];
+                    
+                    colorContainers.forEach(c => c.style.display = 'none');
+
+                    for (let i = 0; i < rectPair.length; i++) {
+                        const container = colorContainers[i];
+                        const block = colorBlocks[i];
+                        const label = hexLabels[i];
+
+                        container.style.display = 'block';
+
+                        const color = rectPair[i];
+                        block.style.background = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                        label.textContent = rgbToHex(color.r, color.g, color.b);
+
+                        if (i ===0 && lockedIndex !== null) {
+                            container.classList.add('locked');
+                        } else {
+                            container.classList.remove('locked');
+                        }
+                    }
+
+                    for (let i = rectPair.length; i < colorContainers.length; i++) {
+                        colorContainers[i].style.display = 'none';
+                    }
+                }
+
+
+                function splitComplementaryColors() {
+                    let baseColor;
+                    const lockedIndices = [0, 1, 2, 3, 4].filter(i => locked[i]);
+
+                    if (lockedIndices.length > 1) {
+                        alert("Split Complementary palette can only use 1 locked color. Please unlock others.")
+                        return;
+                    }
+
+                    let lockedIndex = null;
+
+                    if (lockedIndices.length === 1) {
+                        lockedIndex = lockedIndices[0];
+                        baseColor = hexLabels[lockedIndex].textContent;
+
+                        locked[lockedIndex] = false;
+                        colorContainers[lockedIndex].classList.remove('locked');
+                        locked[0] = true;
+                    } else {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256)
+                        baseColor = `rgb(${r}, ${g}, ${b})`;
+                        locked[0] = false;
+                    }
+
+                    let baseR, baseG, baseB;
+
+                    if (baseColor.startsWith('#')) {
+                        const bigint = parseInt(baseColor.slice(1), 16);
+                        baseR = (bigint >> 16) & 255;
+                        baseG = (bigint >> 8) & 255;
+                        baseB = bigint & 255;
+                    } else {
+                        [baseR, baseG, baseB] = baseColor.match(/\d+/g).map(Number);
+                    }
+
+                    const hsl = rgbToHsl(baseR, baseG, baseB);
+
+                    const sc1 = hslToRgb((hsl.h + 150) % 360, hsl.s, hsl.l);
+                    const sc2 = hslToRgb((hsl.h + 210) % 360, hsl.s, hsl.l);
+
+                    const scPair = [
+                        { r: baseR, g: baseG, b: baseB },
+                        { r: sc1.r, g: sc1.g, b: sc1.b},
+                        { r: sc2.r, g: sc2.g, b: sc2.b }
+                    ];
+                    
+                    colorContainers.forEach(c => c.style.display = 'none');
+
+                    for (let i = 0; i < scPair.length; i++) {
+                        const container = colorContainers[i];
+                        const block = colorBlocks[i];
+                        const label = hexLabels[i];
+
+                        container.style.display = 'block';
+
+                        const color = scPair[i];
+                        block.style.background = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                        label.textContent = rgbToHex(color.r, color.g, color.b);
+
+                        if (i ===0 && lockedIndex !== null) {
+                            container.classList.add('locked');
+                        } else {
+                            container.classList.remove('locked');
+                        }
+                    }
+
+                    for (let i = scPair.length; i < colorContainers.length; i++) {
+                        colorContainers[i].style.display = 'none';
+                    }
+                }
+
+                function tetradicColors() {
+                    let baseColor;
+                    const lockedIndices = [0, 1, 2, 3, 4].filter(i => locked[i]);
+
+                    if (lockedIndices.length > 1) {
+                        alert("Tetradic palette can only use 1 locked color. Please unlock others.")
+                        return;
+                    }
+
+                    let lockedIndex = null;
+
+                    if (lockedIndices.length === 1) {
+                        lockedIndex = lockedIndices[0];
+                        baseColor = hexLabels[lockedIndex].textContent;
+
+                        locked[lockedIndex] = false;
+                        colorContainers[lockedIndex].classList.remove('locked');
+                        locked[0] = true;
+                    } else {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256)
+                        baseColor = `rgb(${r}, ${g}, ${b})`;
+                        locked[0] = false;
+                    }
+
+                    let baseR, baseG, baseB;
+
+                    if (baseColor.startsWith('#')) {
+                        const bigint = parseInt(baseColor.slice(1), 16);
+                        baseR = (bigint >> 16) & 255;
+                        baseG = (bigint >> 8) & 255;
+                        baseB = bigint & 255;
+                    } else {
+                        [baseR, baseG, baseB] = baseColor.match(/\d+/g).map(Number);
+                    }
+
+                    const hsl = rgbToHsl(baseR, baseG, baseB);
+
+                    const tetradic1 = hslToRgb((hsl.h + 60) % 360, hsl.s, hsl.l);
+                    const tetradic2 = hslToRgb((hsl.h + 180) % 360, hsl.s, hsl.l);
+                    const tetradic3 = hslToRgb((hsl.h + 240) % 360, hsl.s, hsl.l);
+
+                    const tetradicPair = [
+                        { r: baseR, g: baseG, b: baseB },
+                        { r: tetradic1.r, g: tetradic1.g, b: tetradic1.b},
+                        { r: tetradic2.r, g: tetradic2.g, b: tetradic2.b },
+                        { r: tetradic3.r, g: tetradic3.g, b: tetradic3.b },
+                    ];
+                    
+                    colorContainers.forEach(c => c.style.display = 'none');
+
+                    for (let i = 0; i < tetradicPair.length; i++) {
+                        const container = colorContainers[i];
+                        const block = colorBlocks[i];
+                        const label = hexLabels[i];
+
+                        container.style.display = 'block';
+
+                        const color = tetradicPair[i];
+                        block.style.background = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                        label.textContent = rgbToHex(color.r, color.g, color.b);
+
+                        if (i ===0 && lockedIndex !== null) {
+                            container.classList.add('locked');
+                        } else {
+                            container.classList.remove('locked');
+                        }
+                    }
+
+                    for (let i = tetradicPair.length; i < colorContainers.length; i++) {
+                        colorContainers[i].style.display = 'none';
+                    }
+                }
+
+                function triadColors() {
+                    let baseColor;
+                    const lockedIndices = [0, 1, 2, 3, 4].filter(i => locked[i]);
+
+                    if (lockedIndices.length > 1) {
+                        alert("Triad palette can only use 1 locked color. Please unlock others.")
+                        return;
+                    }
+
+                    let lockedIndex = null;
+
+                    if (lockedIndices.length === 1) {
+                        lockedIndex = lockedIndices[0];
+                        baseColor = hexLabels[lockedIndex].textContent;
+
+                        locked[lockedIndex] = false;
+                        colorContainers[lockedIndex].classList.remove('locked');
+                        locked[0] = true;
+                    } else {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256)
+                        baseColor = `rgb(${r}, ${g}, ${b})`;
+                        locked[0] = false;
+                    }
+
+                    let baseR, baseG, baseB;
+
+                    if (baseColor.startsWith('#')) {
+                        const bigint = parseInt(baseColor.slice(1), 16);
+                        baseR = (bigint >> 16) & 255;
+                        baseG = (bigint >> 8) & 255;
+                        baseB = bigint & 255;
+                    } else {
+                        [baseR, baseG, baseB] = baseColor.match(/\d+/g).map(Number);
+                    }
+
+                    const hsl = rgbToHsl(baseR, baseG, baseB);
+
+                    const triad1 = hslToRgb((hsl.h + 120) % 360, hsl.s, hsl.l);
+                    const triad2 = hslToRgb((hsl.h + 240) % 360, hsl.s, hsl.l);
+
+                    triadPair = [
+                        { r: baseR, g: baseG, b: baseB },
+                        { r: triad1.r, g: triad1.g, b: triad1.b},
+                        { r: triad2.r, g: triad2.g, b: triad2.b }
+                    ];
+                    
+                    colorContainers.forEach(c => c.style.display = 'none');
+
+                    for (let i = 0; i < triadPair.length; i++) {
+                        const container = colorContainers[i];
+                        const block = colorBlocks[i];
+                        const label = hexLabels[i];
+
+                        container.style.display = 'block';
+
+                        const color = triadPair[i];
+                        block.style.background = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                        label.textContent = rgbToHex(color.r, color.g, color.b);
+
+                        if (i ===0 && lockedIndex !== null) {
+                            container.classList.add('locked');
+                        } else {
+                            container.classList.remove('locked');
+                        }
+                    }
+
+                    for (let i = triadPair.length; i < colorContainers.length; i++) {
+                        colorContainers[i].style.display = 'none';
+                    }
+                }
+
+                generateButton.addEventListener('click', () => {
+                    if (harmonySelect.value === 'analogous') {
+                        analogousColors();
+
+                    } else if (harmonySelect.value === 'complementary') {
+                        complementaryColors();
+                    
+                    } else if (harmonySelect.value === 'dscomplementary') {
+                        doubleSplitComplementaryColors();
+
+                    } else if (harmonySelect.value === 'rectangle') {
+                        rectangleColors();
+                    
+                    } else if (harmonySelect.value === 'splitcomplementary') {
+                        splitComplementaryColors();
+                    
+                    } else if (harmonySelect.value === 'tetradic') {
+                        tetradicColors();
+
+                    } else if (harmonySelect.value === 'triad') {
+                        triadColors();
+
+                    } else {
+                        generateColors();
+                    }
+                });
 
                 function rgbToHsl(r, g, b) {
                     r /= 255; g /= 255; b /= 255;
@@ -277,15 +754,6 @@
                     }
                     return { r: Math.round(r*255), g: Math.round(g*255), b: Math.round(b*255) };
                 }
-
-
-                generateButton.addEventListener('click', () => {
-                    if (harmonySelect.value === 'complementary') {
-                        complementaryColors();
-                    } else {
-                        generateColors();
-                    }
-                });
 
                 function openPicker(block, index) {
                     selectedBox = block;
