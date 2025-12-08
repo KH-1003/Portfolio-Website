@@ -1,13 +1,11 @@
 List of things to add and needing done
 
-    - add Analogous and triad to the color palette tool
-
     - Creating the other tool
+
+    - Add art to portfolio
 
     - Cleaning up code to make it present more like a template
 
     - Adding better images for the tool and portfolio clickable boxes
-
-    - Organizing the page files to be cleaner, portfolio pages in a folder, tools in a folder, etc.?
 
     - Self evaluation part of the paper is the most important for the learning objectives (paper portion)
