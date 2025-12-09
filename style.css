@@ -206,52 +206,6 @@ div#pagewrap {
     font-size:1.2em;
 }
 
-/* Tool Boxes and any styling for Tools */
-
-.tool-grid {
-    display:flex;
-    flex-wrap: wrap;
-    gap:40px;
-    justify-content: center;
-    transform: translateY(-92px);
-}
-
-.tool-card {
-    text-decoration: none;
-    color: inherit;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    border-radius: 8px;
-    background-color: #f2f2f2;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-    flex: 0 0 300px;
-    max-width:300px;
-}
-
-.tool-card:hover {
-    transform:translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.tool-image img {
-    width: 100%;
-    height: auto;
-}
-
-.tool-info {
-    padding: 16px;
-    text-align: center;
-}
-
-.tool-info h1 {
-    margin: 0;
-    font-size:1.2em;
-}
-
-/* Portfolio - Brand and Layout */
-
 .art-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -296,6 +250,14 @@ div#pagewrap {
 
 /* Lightbox CSS for art portfolio */
 
+#lightbox {
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+}
+
 .lightbox {
     position: fixed;
     top:0;
@@ -307,6 +269,10 @@ div#pagewrap {
     justify-content: center;
     align-items: center;
     z-index: 9999;
+}
+
+body.modal-open {
+    overflow: hidden;
 }
 
 .lightbox.hide {
@@ -337,6 +303,8 @@ div#pagewrap {
     font-family: "Cambria","Cochin", "Georgia", "Times", "Times New Roman","serif";
 }
 
+/* Grid inside lightbox for specific projects that are series */
+
 .brothersgrimm-grid {
     display: flex;
     align-items: flex-start;
@@ -356,6 +324,85 @@ div#pagewrap {
     border-radius: 8px;
 }
 
+.awareness-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 2fr);
+    gap: 2rem;
+    padding: 10px;
+    max-height: 95vh;
+    overflow-y: auto;
+}
+
+.awareness-grid img {
+    width:60%;
+    height:auto;
+    object-fit: cover;  
+    margin-bottom: 10px;  
+    border-radius: 8px;
+}
+
+.softball-grid {
+    display: flex;
+    align-items: flex-start;
+    overflow-x: auto;
+    grid-template-columns: repeat(auto-fit, minmax(600px, 3fr));
+    gap: 1rem;
+    padding: 10px;
+    
+}
+
+.softball-grid img {
+    flex: 0 0 auto;
+    width:600px;
+    height:auto;
+    object-fit: cover;  
+    margin-bottom: 10px;  
+    border-radius: 8px;
+}
+
+/* Tool Boxes and any styling for Tools */
+
+.tool-grid {
+    display:flex;
+    flex-wrap: wrap;
+    gap:40px;
+    justify-content: center;
+    transform: translateY(-92px);
+}
+
+.tool-card {
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    background-color: #f2f2f2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex: 0 0 300px;
+    max-width:300px;
+}
+
+.tool-card:hover {
+    transform:translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.tool-image img {
+    width: 100%;
+    height: auto;
+}
+
+.tool-info {
+    padding: 16px;
+    text-align: center;
+}
+
+.tool-info h1 {
+    margin: 0;
+    font-size:1.2em;
+}
 
 /* Color Palette Creator Tool */
 
@@ -555,16 +602,6 @@ button#confirmColor:hover {
     color:#f2f2f2;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
 }
-
-
-
-
-
-
-
-
-
-
 
 /* About me page */
 
