@@ -24,9 +24,7 @@
     
         <div id="pagewrap">
             <div class="art-grid">
-                <img src="artwork/studioart/BrothersG1.png" data-full="artwork/studioart/BrothersG1.png" alt="Brothers Grimm 1" class="artwork" data-title="Shoes Danced to Pieces 1" data-medium="Watercolor and Ink" data-year="2024">
-                <img src="artwork/studioart/BrothersG2.png" data-full="artwork/studioart/BrothersG2.png" alt="Brothers Grimm 2" class="artwork" data-title="Shoes Danced to Pieces 2" data-medium="Watercolor and Ink" data-year="2024">
-                <img src="artwork/studioart/BrothersG3.png" data-full="artwork/studioart/BrothersG3.png" alt="Brothers Grimm 3" class="artwork" data-title="Shoes Danced to Pieces 3" data-medium="Watercolor and Ink" data-year="2024">
+                <img src="artwork/studioart/BrothersG1.png" data-full="artwork/studioart/BrothersG1.png" alt="Brothers Grimm Series" class="artwork brothersgrimm-thumb" data-series="Shoes Danced to Pieces" data-medium="Watercolor and Ink" data-year="2024">
                 <img src="artwork/studioart/Acetone.png" data-full="artwork/studioart/Acetone.png" alt="Acetone Ad" class="artwork" data-title="OnyxBrand Advertisement" data-medium="Graphite and Digital Artwork" data-year="2024">
                 <img src="artwork/studioart/VogueRose.png" data-full="artwork/studioart/VogueRose.png" alt="Vogue Rose" class="artwork" data-title="Vogue Rose" data-medium="Ink and Digital Artwork" data-year="2024">
                 <img src="artwork/studioart/CowMoon.png" data-full="artwork/studioart/CowMoon.png" alt="Cow and the Moon" class="artwork" data-title="Cow Jumped Over the Moon" data-medium="Acrylic, Watercolor, and Ink" data-year="2024">
@@ -44,6 +42,8 @@
                 <span class="close">&times;</span>
                 <img class="lightbox-img" src="" alt="">
                 <div class="metadata"></div>
+
+                <div class="brothersgrimm-grid"></div>
             </div>
             
             <script>
@@ -52,34 +52,84 @@
                 const lightboxImg = document.querySelector('.lightbox-img')
                 const closeButton = document.querySelector('.close');
                 const metadataBox = document.querySelector('.metadata');
+                
+                const seriesImages = {
+                    brothersgrimm: [
+                        { src: "artwork/studioart/BrothersG1.png" },
+                        { src: "artwork/studioart/BrothersG2.png", title:"Shoes Danced to Pieces", medium:"Watercolor and Ink", year:"2024" },
+                        { src: "artwork/studioart/BrothersG3.png"}
+                    ]
+                };
 
                 images.forEach(img => {
                     img.addEventListener('click', () => {
                         lightboxImg.src = img.dataset.full;
+                        if (!img.classList.contains('brothersgrimm-thumb')) {
 
-                        const title = img.dataset.title || "";
-                        const medium = img.dataset.medium || "";
-                        const year = img.dataset.year || "";
+                            const title = img.dataset.title || "";
+                            const medium = img.dataset.medium || "";
+                            const year = img.dataset.year || "";
             
-                        metadataBox.innerHTML = `
-                        ${title ? `<strong>${title}</strong><br>` : ""}
-                        ${medium ? `${medium}<br>` : ""}
-                        ${year ? `${year}<br>` : ""}
-                        `;
+                            metadataBox.innerHTML = `
+                            ${title ? `<strong>${title}</strong><br>` : ""}
+                            ${medium ? `${medium}<br>` : ""}
+                            ${year ? `${year}<br>` : ""}
+                            `;
 
-                        lightbox.classList.remove('hide');
+                            lightbox.classList.remove('hide');
+                        }
                     });
                 });
 
+                const brothersThumb = document.querySelector('.brothersgrimm-thumb');
+                const seriesGrid = document.querySelector('.brothersgrimm-grid');
+
+                brothersThumb.addEventListener('click', () => {
+                    lightboxImg.style.display = "none";
+                    metadataBox.style.display = "none";
+
+                    seriesGrid.innerHTML ="";
+
+                    seriesImages.brothersgrimm.forEach(item => {
+                        const container = document.createElement('div'); // container for image + metadata
+                        container.classList.add('series-item');
+
+                        const img = document.createElement('img');
+                        img.src = item.src;
+
+                        const meta = document.createElement('div');
+                        meta.classList.add('series-meta');
+                        meta.innerHTML = `
+                            ${item.title ? `<strong>${item.title}</strong><br>` : ""}
+                            ${item.medium ? `${item.medium}<br>` : ""}
+                            ${item.year ? `${item.year}` : ""}
+                        `;
+
+                        container.appendChild(img);
+                        container.appendChild(meta);
+                        seriesGrid.appendChild(container);
+                    });
+                    lightbox.classList.remove('hide');
+                })
+
                 closeButton.addEventListener('click', () => {
                     lightbox.classList.add('hide');
+                    resetLightbox()
                 });
 
                 lightbox.addEventListener('click', e => {
                     if (e.target === lightbox) {
                         lightbox.classList.add('hide');
+                        resetLightbox()
                     }
                 });
+
+                function resetLightbox() {
+                    lightboxImg.style.display = "";
+                    metadataBox.style.display = "";
+                    seriesGrid.innerHTML = "";
+                    lightbox.classList.add('hide');
+                }
 
             </script>
 
