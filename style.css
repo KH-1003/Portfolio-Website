@@ -31,6 +31,10 @@ body {
     flex-direction: column;
 }
 
+input {
+    font-family: inherit;
+}
+
 /* Text tags */
 
 p {
@@ -473,6 +477,7 @@ body.modal-open {
     width:auto;
     text-align: center;
 }
+
 .lock-wrap{
     position: absolute;
     top: 50%;
@@ -504,7 +509,6 @@ body.modal-open {
     background-color: rgba(0,0,0, 0.2);
     pointer-events: auto;
 }
-
 
 @media screen and (max-width:500px) {
     body { padding: 2em; }
@@ -602,6 +606,337 @@ button#confirmColor:hover {
     color:#f2f2f2;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
 }
+
+/* Gradient Creator Tool */
+
+.gradient-palette {
+    position: relative; 
+    background: #ffffff;
+    width: 45em;
+    height:25em;
+    border-radius: 20px;
+    box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: #383838;
+    padding-top: 5em;
+    box-sizing: border-box;
+}
+
+.gradient-palette button {
+    outline: none;
+    border: none;
+    font-size: 1.1em;
+    border-radius: 2em;
+    background:#383838;
+    font-weight: 500;
+}
+
+.gradient-palette button:hover {
+    background:#a7403f;
+    color:#f2f2f2;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+#generateButton {
+    position: absolute;
+    top: -1em;
+    left: 50%;
+    padding: 0.7em 2em;
+    transform: translateX(-50%);
+}
+
+.generateButton{
+    letter-spacing: 2px;
+    color:#f2f2f2;
+}
+
+#randomButton {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 7px 10px;
+    font-size: 14px;
+    color:#f2f2f2;
+}
+
+.randomButton.active {
+    background:#a7403f;
+    transform: scale(.95);
+}
+
+.stops{
+    position: absolute;
+    font-weight: 200;
+    top:-20px;
+    left:0;
+    font-size: 0.8em;
+    color:#383838
+}
+
+#gradientSelect {
+    position:absolute;
+    top:15px;
+    left:15px;
+    background:#383838;
+    padding: 7px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    z-index: 20;
+    margin-bottom: 1rem;
+    border-color: #383838;
+    color: #f2f2f2;
+}
+
+div#gradientwindow{
+    align-self:center;
+}
+
+div#gradientPreview{
+    width:36em;
+    height:6em;
+    position: absolute;
+    color:#ffffff;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    top:3em;
+    left:4.5em;
+}
+
+.picker {
+    opacity: 70%;
+    margin: 0 8px 6px 0;
+    display:block;
+}
+
+div#gradientColorPWrap{
+    position: absolute;
+    top: 10.75em;
+    left:4.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#gradientColorPicker {
+    border-radius:15px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding:10px;
+}
+
+#gradientCanvas {
+    cursor: crosshair;
+    border-radius: 15px;
+    width:100%;
+    max-width: 220px;
+    height:220px;
+    aspect-ratio: 1 / 1;
+}
+
+.hex-control {
+    position: absolute;
+    top: 12.4em;
+    left: 18em;
+}
+
+.hex-preview {
+    width: 35px;
+    height: 35px;
+    background:#f2f2f2;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.hex-input {
+    width: 60px;
+    padding: 6px 8px;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 8px;
+    border: 2px solid #383838;
+    outline: none;
+}
+
+.angle-tool {
+    position: absolute;
+    justify-content: center;
+    left: 22.7em;
+    top: 14em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.angle-dial {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.angle-dial::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    border: 2px solid #383838;
+}
+
+.angle-marker {
+    position: absolute;
+    width: 2px;
+    height: 50%;
+    transform: translateX(-30%);
+    transform-origin: top;
+}
+
+.angle-handle {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: #383838;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.angle-input-row {
+    position: absolute;
+    gap: 4px;
+    top:14.6em;
+    left: 25.4em;
+}
+
+.angle-input {
+    width: 30px;
+    padding: 6px 8px;
+    font-size: 14px;
+    text-align: center;
+    border: 2px solid #383838;
+    border-radius: 8px;
+    outline: none;
+}
+
+.angle-input:disabled {
+    opacity:0.4;
+    cursor:not-allowed;
+}
+
+.angle-input::-webkit-outer-spin-button,
+.angle-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.angle-input {
+    -moz-appearance: textfield;
+}
+
+.color-slider {
+    position:relative;
+    width: 200px;
+    height: 20px;
+    margin: 10px 0 0;
+    cursor: pointer;
+    left:18.3em;
+    top:12.5em;
+}
+
+#addColor {
+    position: absolute;
+    padding: 7px 10px;
+    font-size: 14px;
+    color:#f2f2f2;
+    top:30.5em;
+    margin-left: -34px;
+}
+
+div#gradientPanelWrap {
+    position: absolute;
+    left:30em;
+    top:11.75em;
+}
+
+.stops {
+    opacity: 70%;
+    margin: 0 8px 6px 0;
+}
+
+div#gradientStopsPanel {
+    position: relative;
+    overflow-y: auto;
+    width:220px;
+    height:240px;
+    box-sizing: border-box;
+    padding: 12px;
+    border-radius:15px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+div#gradientStopsPanel button {
+    color:#383838;
+    font-size: 14px;
+    background:none;
+}
+
+#gradientColors {
+    flex-direction: column;
+    gap: 6px;
+}
+
+.color-stop {
+    display:flex;
+    align-items: center;
+    border-radius:8px;
+    padding: 4px;
+    margin-bottom: 5px;
+}
+
+.color-stop:hover{
+    background-color:#f2f2f2
+}
+
+.stop-value {
+    font-size:0.9em;
+    font-weight:600;
+    text-align: center;
+    flex: 1;
+}
+
+.stop-preview {
+    width: 25px;
+    height: 25px;
+    margin-top: 0px;
+    border: 1px solid #f2f2f2;
+    border-radius:50px;
+}
+
+.remove-stop {
+    border: none;
+    background: none;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* About me page */
 

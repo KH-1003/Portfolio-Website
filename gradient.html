@@ -21,11 +21,466 @@
                 <li><a href="about.html">About</a></li>
             </ul>
         </nav>
-        <div id="pagewrap">
-            <p> This is a mock up for what the gradient palette will look like </p>
 
-            <img src="artwork/GradientMockUp.png" alt="Gradient Mock Up" style="width:55%; height:55%; margin-top:-4em;">
-           
+        <div id="pagewrap">
+            
+            <div class="gradient-palette">
+
+                <div id="gradientOptions">
+                    <select id="gradientSelect">
+                       <!-- <option value="blurred">Blurred</option> -->
+                       <!-- <option value="conic">Conic</option> -->
+                       <!-- <option value="diamond">Diamond</option> -->
+                        <option value="linear">Linear</option> 
+                        <option value="radial">Radial</option>
+                       <!-- <option value="reflected">Reflected</option> -->
+                       <!-- <option value="repeating">Repeating</option> -->
+                    </select>
+                </div>
+
+                <button id="generateButton" class="generateButton">Generate</button>
+
+                <button id="randomButton" class="randomButton">Random</button>
+
+                <div id="gradientPreview"></div>
+                
+                <div id="gradientColorPWrap">
+
+                    <p class="picker">Picker</p>
+                    
+                    <div id="gradientColorPicker">
+                        <canvas id="gradientCanvas"></canvas>
+                    </div>
+                </div>
+                
+                <div class="hex-control">
+                    <div class="hex-preview"></div>
+                    <input id="hex-input" type="text" class="hex-input" placeholder="#FFFFFF">
+                </div>
+
+                <div class="angle-tool">
+                    <div class="angle-dial">
+                        <div class="angle-handle"></div>
+                    </div>
+                </div>
+ 
+                <div class="angle-input-row">
+                    <input type="number" class="angle-input" min="0" max="360" value="90">
+                </div>
+
+
+                <div class="color-slider">
+                    <div class="hue-bar"></div>
+                    <div class="hue-handle"></div>
+                </div>
+
+                <button id="addColor">Add Color</button>
+            
+                <div id="gradientPanelWrap">
+
+                    <p class="stops">Stops</p>
+
+                    <div id="gradientStopsPanel">
+                        <div id="gradientColors">
+                            <div class="color-stop">
+                                <div class="stop-preview"></div>
+                                <span class="stop-value">#FF0000</span>
+                                <button class="remove-stop">X</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <script>
+                 
+                const canvas = document.getElementById("gradientCanvas");
+                const hexInput = document.getElementById("hex-input");
+                const stopsContainer = document.getElementById("gradientColors");
+                const addColorBtn = document.getElementById("addColor");
+                const gradientPreview = document.getElementById("gradientPreview");
+                const randomButton = document.getElementById("randomButton");
+                const generateButton = document.getElementById("generateButton");
+                const gradientSelect = document.getElementById("gradientSelect");
+
+                const ctx = canvas.getContext('2d');
+
+                const slider = document.querySelector(".color-slider");
+                const handle = document.querySelector(".hue-handle");
+                const previewBox = document.querySelector(".hex-preview")
+                const dial = document.querySelector(".angle-dial");
+                const angleHandle = document.querySelector(".angle-handle");
+                const angleInput = document.querySelector(".angle-input");
+
+                let gradientType = gradientSelect.value
+                let hue = 0;
+                let angle = 90;
+                let hueDragging = false;
+                let angleDragging = false;
+                let colorStops = [];
+                let randomMode = false;
+
+                window.addEventListener("resize", resizeCanvas);
+
+                function generateRandomStops() {
+                    colorStops = [
+                        { hex: getRandomHex() },
+                        { hex: getRandomHex() },
+                        { hex: getRandomHex() }
+                    ];
+                    renderStops();
+                }
+
+                function updateGradientPreview() {
+                    if (colorStops.length === 0) {
+                        gradientPreview.style.background = "transparent";
+                        return;
+                    }
+
+                    if (colorStops.length === 1) {
+                        gradientPreview.style.background = colorStops[0].hex;
+                        return
+                    }
+
+                    const step = 100 / (colorStops.length - 1);
+
+                    const gradientString = colorStops
+                        .map((stop, index) => {
+                            const position = index * step;
+                            return `${stop.hex} ${position}%`;
+                    })
+                        .join(", ");
+
+                    if (gradientType === "linear") {
+                        gradientPreview.style.background =
+                        `linear-gradient(${angle}deg, ${gradientString})`;
+                    }
+
+                    if (gradientType === "radial") {
+                        gradientPreview.style.background =
+                        `radial-gradient(circle, ${gradientString})`;
+                    }
+                }
+
+                function drawColorCanvas(hue) {
+                    const width = canvas.width;
+                    const height = canvas.height;
+
+                    let [r, g, b] = hueToRgb(hue);
+                    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                    ctx.fillRect(0, 0, width, height);
+
+                    const whiteGradient = ctx.createLinearGradient(0, 0, width, 0);
+                    whiteGradient.addColorStop(0, "white");
+                    whiteGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+                    ctx.fillStyle = whiteGradient;
+                    ctx.fillRect(0, 0, width, height);
+
+                    const blackGradient = ctx.createLinearGradient(0, 0, 0, height);
+                    blackGradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+                    blackGradient.addColorStop(1, "black");
+                    ctx.fillStyle = blackGradient;
+                    ctx.fillRect(0, 0, width, height);
+                }
+
+                function resizeCanvas() {
+                    const rect = canvas.getBoundingClientRect();
+
+                    canvas.width = rect.width;
+                    canvas.height = rect.height;
+                    
+                    drawColorCanvas(hue);
+                }
+
+                function setHueFromEvent(e) {
+                    const rect = slider.getBoundingClientRect();
+                    const handleWidth = handle.offsetWidth;
+                    let x = e.clientX - rect.left;
+
+                    x = Math.max(0, Math.min(rect.width, x));
+
+                    const percent = x / rect.width;
+
+                    hue = Math.round(percent * 360);
+
+                    handle.style.left = `${percent * rect.width - handleWidth / 20}px`;
+
+                    drawColorCanvas(hue);
+                }
+
+                function getPixelRGB(x, y) {
+                    const pixel = ctx.getImageData(x, y, 1, 1).data;
+                    const [r, g, b] = pixel;
+                    return {r, g, b };
+                }
+
+                function updatePreviewColor(r, g, b) {
+                    previewBox.style.background = `rgb(${r}, ${g}, ${b})`;
+                    currentBaseColor = `rgb(${r}, ${g}, ${b})`;
+                }
+
+                function setAngle(newAngle) {
+                    angle = ((newAngle % 360) + 360) % 360;
+
+                    angleInput.value = Math.round(angle);
+
+                    updateDial(angle);
+                    updateGradientPreview();
+                }
+
+                function updateDial(angle) {
+                    dial.style.transform = `rotate(${angle}deg)`;
+                }
+
+                function renderStops() {
+                    stopsContainer.innerHTML = "";
+
+                    if (colorStops.length === 0) {
+                        stopsContainer.style.display = "none";
+                        return;
+                    } else {
+                        stopsContainer.style.display = "block";
+                    }
+
+                    colorStops.forEach((stop, index) => {
+                        const stopEl = document.createElement("div");
+                        stopEl.classList.add("color-stop");
+
+                        stopEl.innerHTML = `
+                        <div class="stop-preview" style="background:${stop.hex}"></div>
+                        <span class="stop-value" contenteditable="true">${stop.hex}</span>
+                        <button class="remove-stop">X</button>
+                        `;
+
+                        stopEl.querySelector(".remove-stop").addEventListener("click", () => {
+                            colorStops.splice(index, 1);
+                            renderStops();
+                        });
+
+                        const label = stopEl.querySelector(".stop-value");
+
+                        label.addEventListener("blur", () => {
+                            let hex = label.textContent.trim();
+
+                            if(!hex.startsWith("#")) hex = "#" + hex;
+
+                            const rgb = hexToRgb(hex);
+
+                            if (!rgb) {
+                                label.textContent = stop.hex;
+                                return;
+                            }
+
+                            stop.hex = hex.toUpperCase();
+                            label.textContent = stop.hex;
+
+                            renderStops();
+                        });
+                        stopsContainer.appendChild(stopEl);
+                    });
+
+                    updateGradientPreview();
+                }
+
+                function angleForLinearGradient() {
+                    if (gradientType === "linear") {
+                        angleHandle.disabled = false;
+                        angleInput.disabled = false;
+                        dial.style.opacity = 1;
+                    } else {
+                        angleHandle.disabled = true;
+                        angleInput.disabled = true;
+                        dial.style.opacity = 0.4;
+                    }
+                }
+
+                function getRandomHex() {
+                    const r = Math.floor(Math.random() * 256);
+                    const g = Math.floor(Math.random() * 256);
+                    const b = Math.floor(Math.random() * 256);
+
+                    return rgbToHex(r, g, b);
+                }
+
+                function rgbToHex(r, g, b) {
+                    const clamp = n => Math.max(0, Math.min(255, Math.round(n)));
+                    return "#" + [r, g, b].map(clamp).map(n => n.toString(16).padStart(2, '0')).join('').toUpperCase();
+                }
+
+                function hueToRgb(h) {
+                    h = h % 360;
+                    let c = 255;
+                    let x = Math.floor((1 - Math.abs((h / 60) % 2 - 1)) * 255);
+
+                    if (h < 60) return [c, x, 0];
+                    if (h < 120) return [x, c, 0];
+                    if (h < 180) return [0, c, x];
+                    if (h < 240) return [0, x, c];
+                    if (h < 300) return [x, 0, c];
+
+                    return [c, 0, x];
+                }
+
+                function hexToRgb(hex) {
+                    hex = hex.replace("#", "");
+
+                    if (hex.length !== 6) return null;
+
+                    const r = parseInt(hex.slice(0,2), 16);
+                    const g = parseInt(hex.slice(2, 4), 16);
+                    const b = parseInt(hex.slice(4, 6), 16);
+
+                    return { r, g, b };
+                }
+
+                function rgbToHue(r, g, b) {
+                    r /= 255; g /= 255; b /= 255;
+                    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                    let h = 0;
+
+                    if (max === min) return 0;
+
+                    const d = max - min;
+                    
+                    if (max === r) {
+                        h = ((g - b) / d) % 6;
+                    } else if (max === g) {
+                        h = (b - r) / d + 2;
+                    } else {
+                        h = (r - g) / d + 4;
+                    }
+                    
+                    h = Math.round(h * 60);
+
+                    if (h < 0) h += 360;
+
+                    return h;
+                }
+
+                gradientSelect.addEventListener("change", (e) => {
+                    gradientType = e.target.value;
+                    angleForLinearGradient();
+                    updateGradientPreview();
+                })
+
+                generateButton.addEventListener("click", () => {
+                    if (randomMode) {
+                        generateRandomStops();
+                    }
+
+                    updateGradientPreview();
+                });
+
+                randomButton.addEventListener("click", () => {
+                    randomMode = !randomMode;
+                    randomButton.classList.toggle("active", randomMode);
+                });
+
+                dial.addEventListener("mousedown", () => {
+                    angleDragging = true;
+                });
+
+                document.addEventListener("mouseup", () => {
+                    angleDragging = false;
+                });
+
+                document.addEventListener("mousemove", (e) => {
+                    if (!angleDragging) return;
+
+                    const rect = dial.getBoundingClientRect();
+
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+
+                    const dx = e.clientX - centerX;
+                    const dy = e.clientY - centerY;
+
+                    let rad = Math.atan2(dy, dx);
+                    let deg = rad * (180 / Math.PI);
+
+                    deg = deg + 90;
+
+                    setAngle(deg);
+                });
+
+                angleInput.addEventListener("input", (e) => {
+                    setAngle(parseInt(e.target.value) || 0);
+                });
+
+                addColorBtn.addEventListener("click", () => {
+                    const newStop = {
+                        hex: hexInput.value || "#FFFFFF"
+                    };
+                     colorStops.push(newStop)
+
+                     renderStops();
+                });
+
+                slider.addEventListener('mousedown', (e) => {
+                    hueDragging = true;
+                    setHueFromEvent(e);
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!hueDragging) return;
+                    setHueFromEvent(e);
+                });
+
+                document.addEventListener('mouseup', (e) => {
+                    hueDragging = false;
+                })
+
+                slider.addEventListener('click', (e) => {
+                    setHueFromEvent(e);
+                });
+
+                canvas.addEventListener('click', (e) => {
+                    const rect = canvas.getBoundingClientRect();
+
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+
+                    const x = Math.floor((e.clientX - rect.left) * scaleX);
+                    const y = Math.floor((e.clientY - rect.top) * scaleY);
+
+                    const {r, g, b } = getPixelRGB(x, y);
+
+                    updatePreviewColor(r, g, b);
+
+                    const hex = rgbToHex(r, g, b);
+                    hexInput.value = hex;
+                });
+
+                hexInput.addEventListener("input", (e) => {
+                    let hex = e.target.value.trim();
+
+                    if(!hex.startsWith("#")) hex = "#" + hex;
+
+                    const rgb = hexToRgb(hex);
+
+                    if (!rgb) return;
+
+                    const { r, g, b } = rgb;
+
+                    updatePreviewColor(r, g, b);
+
+                    hue = rgbToHue(r, g, b);
+
+                    const percent = hue / 360;
+                    const rect = slider.getBoundingClientRect();
+
+                    handle.style.left = `${percent * slider.getBoundingClientRect().width - handle.offsetWidth / 20}px`;
+
+                    drawColorCanvas(hue);
+                });
+
+                renderStops();
+                resizeCanvas();
+                angleForLinearGradient();
+
+            </script>
+
         </div>
 
         <footer>
